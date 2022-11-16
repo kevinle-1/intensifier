@@ -16,9 +16,11 @@ window.onload = function() {
 	var ctx = canvas.getContext('2d');
 	var gif, image, generateInt;
 	var frames = settings.numFrames;
+	var width = -1;
+	var height = -1;
 
-	ctx.fillStyle = '#FFF';
-	ctx.fillRect(0,0,canvas.width, canvas.height);
+	//ctx.fillStyle = 'white';
+	//ctx.fillRect(0,0,canvas.width, canvas.height);
 
 	var createImage = function(url) {
 
@@ -32,8 +34,11 @@ window.onload = function() {
 		
 			$('#upload').show();
 
-			canvas.width = image.width;
-			canvas.height = image.height;
+			width = image.width;
+			height = image.height;
+			
+			canvas.width = width + (width * 0.1);
+			canvas.height = height + (height * 0.1);
 
 			createFrames();
 		}
@@ -44,23 +49,25 @@ window.onload = function() {
 
 		gif.start();
 		gif.setSize(canvas.width, canvas.height);
+		gif.setTransparent(0x0);
 
 		for(var i = 0; i < settings.numFrames; i++) {
 				
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 			var shift = {
-				x : Math.random() * 20 - 40,
-				y : Math.random() * 20 - 40
+				x : (width * 0.3) + (Math.random() * (width * 0.2) - (width * 0.4)),
+				y : (height * 0.3) + (Math.random() * (height * 0.2) - (height * 0.4))
 			}
 			var pos = {
-				x : canvas.width + 40,
-				y : canvas.height + 40
+				x : width + 40,
+				y : height + 40
 			}
+			
+			//ctx.fillStyle = 'black';
+			//ctx.fillRect(0,0,canvas.width, canvas.height);
 
-			ctx.drawImage(image, shift.x, shift.y, pos.x, pos.y);
-
-			// ctx.fillStyle = "#FFF";
+			ctx.drawImage(image, 0, 0, width, height, shift.x, shift.y, width, height);
 			// ctx.font = "bold 22px Arial";
 			// ctx.strokeStyle = 'black';
 			// ctx.lineWidth = 8;
@@ -69,9 +76,7 @@ window.onload = function() {
 			// ctx.fillStyle = 'white';
 			// ctx.fillText(settings.label, 20, canvas.height - 20);
 
-			var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-			gif.addFrame(imageData.data, true);
+			gif.addFrame(ctx, false);
 		}
 
 			gif.finish();
